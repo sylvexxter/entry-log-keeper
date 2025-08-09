@@ -114,7 +114,7 @@ const SubmissionTable: React.FC = () => {
             </TableRow>
           ) : (
             data!.map((item) => (
-              <TableRow key={item.id} className={verifiedIds.has(item.id) ? "bg-destructive/10" : undefined}>
+              <TableRow key={item.id} className={verifiedIds.has(item.id) ? "bg-destructive/15 hover:bg-destructive/20" : undefined}>
                 <TableCell className="align-top break-words max-w-[0]">
                   {item.content}
                 </TableCell>
