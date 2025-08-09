@@ -12,12 +12,15 @@ import {
   TableCaption,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import { importSPKI, jwtVerify, type KeyLike } from "jose";
 
 type Submission = {
   id: string;
   content: string;
   created_at: string;
 };
+
+const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEMU1JFVEO9FkVr0r041GpAWzKvQi1TBYm\narJj3+aNeC2aK9GT7Hct1OJGWQGbUkNWTeUr+Ui09PjBit+AMYuHgA==\n-----END PUBLIC KEY-----`;
 
 const fetchSubmissions = async (): Promise<Submission[]> => {
   const { data, error } = await supabase
@@ -36,6 +39,45 @@ const SubmissionTable: React.FC = () => {
     queryKey: ["submissions"],
     queryFn: fetchSubmissions,
   });
+
+  // Import the ES256 public key once
+  const [publicKey, setPublicKey] = React.useState<KeyLike | null>(null);
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const key = await importSPKI(PUBLIC_KEY_PEM, "ES256");
+        setPublicKey(key);
+      } catch (e) {
+        console.error("Public key import error:", e);
+      }
+    })();
+  }, []);
+
+  // Compute which rows contain a valid ES256-signed JWT
+  const [verifiedIds, setVerifiedIds] = React.useState<Set<string>>(new Set());
+  React.useEffect(() => {
+    if (!data || !publicKey) {
+      setVerifiedIds(new Set());
+      return;
+    }
+
+    const jwtRegex = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
+
+    (async () => {
+      const results = await Promise.all(
+        data.map(async (item) => {
+          if (!jwtRegex.test(item.content)) return { id: item.id, verified: false };
+          try {
+            await jwtVerify(item.content, publicKey, { algorithms: ["ES256"] });
+            return { id: item.id, verified: true };
+          } catch {
+            return { id: item.id, verified: false };
+          }
+        })
+      );
+      setVerifiedIds(new Set(results.filter((r) => r.verified).map((r) => r.id)));
+    })();
+  }, [data, publicKey]);
 
   if (error) {
     return (
@@ -72,7 +114,7 @@ const SubmissionTable: React.FC = () => {
             </TableRow>
           ) : (
             data!.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.id} className={verifiedIds.has(item.id) ? "bg-destructive/10" : undefined}>
                 <TableCell className="align-top break-words max-w-[0]">
                   {item.content}
                 </TableCell>
