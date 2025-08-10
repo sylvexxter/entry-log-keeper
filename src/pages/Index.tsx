@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
 const Index = () => {
-  console.log("Index component rendering...");
   const queryClient = useQueryClient();
   const { user, loading, signInWithGoogle, signOut } = useAuth();
-  console.log("Auth state:", { user: user?.email, loading });
 
   const handleSubmitted = () => {
     console.log("Invalidating submissions query after insert");
@@ -41,16 +39,27 @@ const Index = () => {
           {user ? (
             <SubmissionForm onSubmitted={handleSubmitted} />
           ) : (
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-muted-foreground">Sign in with Google to submit new text.</p>
-              <Button onClick={signInWithGoogle} size="sm" disabled={loading}>Sign in</Button>
-            </div>
+            <p className="text-sm text-muted-foreground">Sign in with Google to submit new text.</p>
           )}
         </div>
 
         <div className="mt-8">
           <SubmissionTable />
         </div>
+        
+        <footer className="mt-12 pt-8 border-t border-border text-center">
+          <p className="text-sm text-muted-foreground">
+            View source code on{" "}
+            <a 
+              href="https://github.com/sylvexxter/entry-log-keeper" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              GitHub
+            </a>
+          </p>
+        </footer>
       </div>
     </div>
   );
