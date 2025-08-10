@@ -12,7 +12,7 @@ import {
   TableCaption,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { importSPKI, jwtVerify, type KeyLike } from "jose";
+import { importSPKI, compactVerify, type KeyLike } from "jose";
 
 type Submission = {
   id: string;
@@ -66,9 +66,11 @@ const SubmissionTable: React.FC = () => {
     (async () => {
       const results = await Promise.all(
         data.map(async (item) => {
-          if (!jwtRegex.test(item.content)) return { id: item.id, verified: false };
+          const trimmed = item.content.trim();
+          if (!jwtRegex.test(trimmed)) return { id: item.id, verified: false };
           try {
-            await jwtVerify(item.content, publicKey, { algorithms: ["ES256"] });
+            const { protectedHeader } = await compactVerify(trimmed, publicKey);
+            if (protectedHeader.alg !== "ES256") return { id: item.id, verified: false };
             return { id: item.id, verified: true };
           } catch {
             return { id: item.id, verified: false };
