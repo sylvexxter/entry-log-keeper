@@ -48,17 +48,14 @@ const Index = () => {
         </div>
         
         <footer className="mt-12 pt-8 border-t border-border text-center">
-          <p className="text-sm text-muted-foreground">
-            View source code on{" "}
-            <a 
-              href="https://github.com/sylvexxter/entry-log-keeper" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              GitHub
-            </a>
-          </p>
+          <a 
+            href="https://github.com/sylvexxter/entry-log-keeper" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm text-muted-foreground hover:text-primary hover:underline"
+          >
+            @github.com/sylvexxter/entry-log-keeper
+          </a>
         </footer>
       </div>
     </div>
