@@ -20,7 +20,10 @@ type Submission = {
   created_at: string;
 };
 
-const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcq937rbYJj70wz5zgSbvRvzucPId\ngPAt2ka8F9Rs/QRdhl4WyjxTvjx5pHWMLI218xzfsG/BOGQr5cSZZAApnw==\n-----END PUBLIC KEY-----`;
+const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
+MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEMU1JFVEO9FkVr0r041GpAWzKvQi1TBYm
+arJj3+aNeC2aK9GT7Hct1OJGWQGbUkNWTeUr+Ui09PjBit+AMYuHgA==
+-----END PUBLIC KEY-----`;
 
 const fetchSubmissions = async (): Promise<Submission[]> => {
   const { data, error } = await supabase
