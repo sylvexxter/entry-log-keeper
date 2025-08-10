@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
 const Index = () => {
-  console.log("Index component is rendering");
   const queryClient = useQueryClient();
   const { user, loading, signInWithGoogle, signOut } = useAuth();
-  console.log("Auth state:", { user: user?.email, loading });
 
   const handleSubmitted = () => {
     console.log("Invalidating submissions query after insert");
